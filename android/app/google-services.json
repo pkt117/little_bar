@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "281288883729",
+    "project_id": "littlebar-eb476",
+    "storage_bucket": "littlebar-eb476.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:281288883729:android:1e60fba58e11ae5c157bb0",
+        "android_client_info": {
+          "package_name": "com.little_bar"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "281288883729-vnm00i7ubdd7rao9tonrin5dilokmgbq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.little_bar",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "281288883729-if66fd15loi8v1ciiiv11kic4sbahlb9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyByDjEr0NCSrqbOZMSeLtJq_dKJox3sBW8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "281288883729-if66fd15loi8v1ciiiv11kic4sbahlb9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
