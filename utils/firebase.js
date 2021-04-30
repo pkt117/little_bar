@@ -45,12 +45,31 @@ export const signup = async ({email, password, name}) => {
       name: name,
       email: email,
       createdAt: firestore.Timestamp.fromDate(new Date()),
+      profileImg:
+        'https://firebasestorage.googleapis.com/v0/b/capston193-7eac6.appspot.com/o/profile%2Fdefault_profile.png?alt=media&token=085519df-d7d2-41ea-a597-938a79160785',
       //userImg: storageUrl,
+      scrap: firestore.FieldValue.arrayUnion(),
     });
 
   return user;
 };
 // 회원가입
+
+export const getCurrentUser = () => {
+  const {
+    displayName,
+    email,
+    uid,
+    // photoURL
+  } = auth().currentUser;
+  // console.log(auth().currentUser);
+  return {
+    name: displayName,
+    email,
+    uid,
+    // photoUrl: photoURL
+  };
+}; // 유저정보
 
 export const logout = async () => {
   return await auth().signOut();

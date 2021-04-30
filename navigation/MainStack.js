@@ -1,8 +1,9 @@
 import React from 'react';
-import Home from '../screen/Home';
+import Home from './HomeStack';
 import Profile from '../screen/Profile';
-import Scrap from '../screen/Scrap';
-import Search from '../screen/Search';
+import Scrap from './ScrapStack';
+import Search from './SearchStack';
+// import Search from './FilterStack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
@@ -35,10 +36,19 @@ const MainStack = () => {
         style: {
           backgroundColor: 'black',
         },
+        // keyboardHidesTabBar: true,
       }}>
       <Tab.Screen name="Home" component={Home} />
-      <Tab.Screen name="Search" component={Search} />
-      <Tab.Screen name="Scrap" component={Scrap} />
+      <Tab.Screen
+        name="Search"
+        component={Search}
+        options={{unmountOnBlur: true}}
+      />
+      <Tab.Screen
+        name="Scrap"
+        component={Scrap}
+        options={{unmountOnBlur: true}}
+      />
       <Tab.Screen name="Profile" component={Profile} />
     </Tab.Navigator>
   );

@@ -12,6 +12,8 @@ import firestore from '@react-native-firebase/firestore';
 
 import ImageSlide from '../components/ImageSlide';
 import rightButton from '../image/rightButton.png';
+import auth from '@react-native-firebase/auth';
+import {useNavigation} from '@react-navigation/native';
 
 const Container = styled.ScrollView`
   flex: 1;
@@ -45,6 +47,9 @@ const Home = () => {
   const [weeklyRecipeData, setWeeklyRecipeDate] = useState('');
   const [sojuCocktail, setSojuCocktail] = useState([]);
   const [movieCocktail, setMovieCocktail] = useState([]);
+  const navigations = useNavigation();
+
+  const user = auth().currentUser;
 
   const getRecipe = async () => {
     try {
@@ -71,10 +76,11 @@ const Home = () => {
         .get()
         .then((querySnapshot) => {
           querySnapshot.forEach((doc) => {
-            const {name, imgUrl} = doc.data();
+            const {name, imgUrl, keyword} = doc.data();
             list1.push({
               name,
               imgUrl,
+              keyword,
             });
           });
         });
@@ -92,10 +98,11 @@ const Home = () => {
         .get()
         .then((querySnapshot) => {
           querySnapshot.forEach((doc) => {
-            const {name, imgUrl} = doc.data();
+            const {name, imgUrl, keyword} = doc.data();
             list2.push({
               name,
               imgUrl,
+              keyword,
             });
           });
         });
@@ -113,7 +120,13 @@ const Home = () => {
       <Poster source={{uri: weeklyRecipeData.imgUrl}}>
         <ShadowText style={styles.textDeco}>금주의 칵테일</ShadowText>
         <ShadowText style={styles.weeklyTitle}>
-          {weeklyRecipeData.name}
+          {weeklyRecipeData.title}
+        </ShadowText>
+        <ShadowText style={styles.weeklyKorName}>
+          {weeklyRecipeData.kor_name}
+        </ShadowText>
+        <ShadowText style={styles.weeklyEngName}>
+          {weeklyRecipeData.eng_name}
         </ShadowText>
 
         <Gradient
@@ -123,8 +136,14 @@ const Home = () => {
             'rgba(0,0,0,0.0)',
             'rgba(0,0,0,1)',
           ]}></Gradient>
-        <ButtonContainer style={styles.recipeGoButton}>
-          <Text style={styles.goButtonText}>레시피{'\n'}보러가기</Text>
+        <ButtonContainer
+          style={styles.recipeGoButton}
+          onPress={() =>
+            navigations.navigate('CocktailScreen', {item: weeklyRecipeData})
+          }>
+          <ShadowText style={styles.goButtonText}>
+            레시피{'\n'}보러가기
+          </ShadowText>
           <ShadowText>
             <Image source={rightButton} />{' '}
           </ShadowText>
@@ -139,26 +158,52 @@ const Home = () => {
 const styles = StyleSheet.create({
   textDeco: {
     position: 'absolute',
-    top: 40,
-    bottom: 0,
-    left: 15,
-    right: 0,
+    top: 190,
+    right: 85,
     color: 'white',
     fontWeight: 'bold',
-    fontSize: 15,
+    borderWidth: 1,
+    borderColor: 'transparent',
+    backgroundColor: 'rgba(40, 40, 40, 0.90)',
+    borderRadius: 20,
+    fontSize: 12,
+    padding: 6,
+    paddingHorizontal: 10,
     elevation: 5,
   },
+
   weeklyTitle: {
     position: 'absolute',
-    top: 105,
-    left: 0,
-    right: 0,
-    bottom: 0,
+    top: 230,
+    right: 15,
+    color: 'white',
+    // fontWeight: 'bold',
+    elevation: 5,
+    fontSize: 16,
+    // fontFamily: 'MapoGoldenPier',
+  },
+  weeklyEngName: {
+    position: 'absolute',
+    top: 325,
+    right: 35,
     textAlign: 'center',
     color: 'white',
-    fontWeight: 'bold',
+    opacity: 0.7,
+    // fontWeight: 'bold',
     elevation: 5,
-    fontSize: 30,
+    fontSize: 45,
+    fontFamily: 'MapoGoldenPier',
+  },
+  weeklyKorName: {
+    position: 'absolute',
+    top: 265,
+    right: 15,
+    textAlign: 'center',
+    color: 'white',
+    // fontWeight: 'bold',
+    elevation: 5,
+    fontSize: 57,
+    fontFamily: 'MapoGoldenPier',
   },
   recipeGoButton: {
     flexDirection: 'row',

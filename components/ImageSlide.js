@@ -2,7 +2,7 @@ import React from 'react';
 import {Dimensions} from 'react-native';
 
 import styled from 'styled-components/native';
-
+import {useNavigation} from '@react-navigation/native';
 const Container = styled.View`
   padding: 20px 0;
 `;
@@ -42,13 +42,19 @@ const ShadowText = styled.Text`
 `;
 
 const ImageSlide = ({label, item}) => {
+  const navigations = useNavigation();
   return (
     <Container>
       <Label>{label}</Label>
       <Scroll horizontal>
         {item.map((item) => {
           return (
-            <PostCard key={String(item.name)} activeOpacity={0.4}>
+            <PostCard
+              key={String(item.name)}
+              activeOpacity={0.4}
+              onPress={() =>
+                navigations.navigate('CocktailScreen', {item: item})
+              }>
               <PostImage
                 resizeMode="cover"
                 source={{uri: item.imgUrl}}

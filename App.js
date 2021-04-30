@@ -1,8 +1,13 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useContext} from 'react';
 import {View} from 'react-native';
 import SplashScreen from 'react-native-splash-screen';
 import Navigation from './navigation';
-import {ProgressProvider, UserProvider} from './contexts';
+import {
+  ProgressProvider,
+  UserProvider,
+  ProgressContext,
+  UserContext,
+} from './contexts';
 
 const App = () => {
   useEffect(() => {

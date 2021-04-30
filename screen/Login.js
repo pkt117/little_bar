@@ -11,7 +11,6 @@ import {
   Image,
 } from 'react-native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import bgImage from '../image/LgImage.png';
 import {removeWhitespace, validateEmail} from '../utils/common';
 import styled from 'styled-components/native';
 import {useNavigation} from '@react-navigation/native';
@@ -20,6 +19,10 @@ import {ProgressContext, UserContext} from '../contexts';
 import {GoogleLogin, FacebookLogin} from '../components';
 import DialogAndroid from 'react-native-dialogs';
 import auth from '@react-native-firebase/auth';
+import Lock from '../image/Lock.png';
+import userImg from '../image/user.png';
+import CheckBox from '@react-native-community/checkbox';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const {width, height} = Dimensions.get('window');
 
@@ -37,6 +40,7 @@ const Login = () => {
   const [isFocused, setIsFocused] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [disabled, setDisabled] = useState(true);
+  const [isSelected, setSelection] = useState(false);
 
   const {spinner} = useContext(ProgressContext);
   const {dispatch} = useContext(UserContext);
@@ -44,6 +48,21 @@ const Login = () => {
   const passwordRef = useRef();
 
   const navigations = useNavigation();
+
+  const _autoLogin = async () => {
+    AsyncStorage.getItem('userData', (err, result) => {
+      const userData = JSON.parse(result);
+      // console.log('userData', userData.user);
+      if (userData !== null) {
+        dispatch(userData.user);
+      }
+    });
+  };
+
+  useEffect(() => {
+    _autoLogin();
+    // AsyncStorage.removeItem('userData');
+  }, []);
 
   const _handleEmailChange = (email) => {
     const changedEmail = removeWhitespace(email);
@@ -66,7 +85,19 @@ const Login = () => {
       spinner.start();
       const user = await login({email, password});
       //   Alert.alert("Login Success", user.email);
+      console.log(user);
       dispatch(user);
+
+      if (isSelected) {
+        AsyncStorage.setItem(
+          'userData',
+          JSON.stringify({
+            // email: email,
+            // uid: auth().currentUser.uid,
+            user: user,
+          }),
+        );
+      }
     } catch (e) {
       Alert.alert('Login Error', '아이디 또는 비밀번호를 다시 확인하세요.');
     } finally {
@@ -100,12 +131,12 @@ const Login = () => {
   };
 
   return (
-    <KeyboardAwareScrollView>
-      <ImageBackground
-        source={bgImage}
-        style={styles.imageContainer}
-        resizeMode="stretch">
+    <KeyboardAwareScrollView stlye={{backgroundColor: 'black'}}>
+      <View style={styles.Container}>
+        <Text style={styles.title}>little bar</Text>
+        <Text style={styles.littleTitle}>손 안에 작은 칵테일 바</Text>
         <View style={styles.loginContainer}>
+          <Image source={userImg} style={styles.userIcon} />
           <TextInput
             isFocused={isFocused}
             value={email}
@@ -118,6 +149,7 @@ const Login = () => {
             onFocus={() => setIsFocused(true)}
             onSubmitEditing={() => passwordRef.current.focus()}
           />
+          <Image source={Lock} style={styles.lockIcon} />
           <TextInput
             value={password}
             ref={passwordRef}
@@ -127,99 +159,151 @@ const Login = () => {
             underlineColorAndroid="transparent"
             style={styles.idPw}
             secureTextEntry={true}
-            maxLength={8}
+            maxLength={15}
             returnKeyType="none"
             onFocus={() => setIsFocused(true)}
             onChangeText={_handlePasswordChange}
           />
+          <View
+            style={{
+              flexDirection: 'row',
+              marginTop: 15,
+              position: 'absolute',
+              top: 135,
+              right: 55,
+            }}>
+            <Text style={{color: 'white', marginTop: 6.5}}>자동 로그인</Text>
+            <CheckBox
+              value={isSelected}
+              onValueChange={setSelection}
+              tintColors={{true: 'white'}}
+              onPress={() => {
+                setChecked(!checked);
+              }}
+              style={styles.loginCheck}
+            />
+          </View>
           <LoginButton
             style={styles.lgButton}
             disabled={disabled}
             onPress={_handleLoginButtonPress}>
-            <Text style={styles.lgText}>LOGIN</Text>
+            <Text style={styles.lgText}>로그인</Text>
           </LoginButton>
         </View>
         <View style={styles.etcButton}>
           <TouchableOpacity style={styles.etcBtn} onPress={forgotPassword}>
-            <Text style={styles.etcBtnText}>FIND</Text>
+            <Text style={styles.etcBtnText}>비밀번호 찾기</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.etcBtn}
             onPress={() => navigations.navigate('Signup')}>
-            <Text style={styles.etcBtnText}>SIGNUP</Text>
+            <Text style={styles.etcBtnText}>회원가입</Text>
           </TouchableOpacity>
         </View>
+        <Text style={styles.sns}>SNS 계정으로 간편로그인하세요</Text>
         <View style={styles.etcButton2}>
           <FacebookLogin />
           <GoogleLogin />
         </View>
-      </ImageBackground>
+      </View>
     </KeyboardAwareScrollView>
   );
 };
 
 const styles = StyleSheet.create({
-  imageContainer: {
+  Container: {
     flex: 1,
     width: width,
     height: height,
+    backgroundColor: 'black',
   },
-  loginContainer: {alignItems: 'center', marginTop: 285},
+  loginContainer: {alignItems: 'center', marginTop: 65},
+  userIcon: {
+    position: 'absolute',
+    top: 35,
+    left: 57,
+    zIndex: 1,
+  },
+  lockIcon: {
+    position: 'absolute',
+    top: 106,
+    left: 57,
+    zIndex: 1,
+  },
   idPw: {
-    width: width - 100,
+    width: width - 115,
     height: 50,
     fontSize: 16,
     backgroundColor: 'rgba(10,10,10,0.6)',
-    borderWidth: 1.5,
-    borderColor: 'gray',
+    borderBottomWidth: 1.5,
+    borderColor: 'white',
     color: 'white',
     marginTop: 20,
-    borderRadius: 20,
-    padding: 10,
+
     paddingVertical: 10,
-    paddingHorizontal: 20,
+    paddingLeft: 27,
   },
   lgButton: {
     width: width - 100,
     height: 50,
-    backgroundColor: 'rgb(178, 190, 195)',
+    backgroundColor: '#74C55A',
     borderWidth: 1.5,
     borderColor: 'black',
-    marginTop: 30,
+    marginTop: 50,
     borderRadius: 20,
     justifyContent: 'center',
   },
   lgText: {
     textAlign: 'center',
-    fontSize: 23,
-    color: 'rgb(45, 52, 54)',
-    fontFamily: 'MapoGoldenPier',
-    fontWeight: 'bold',
+    fontSize: 19,
+    color: 'white',
+    // fontFamily: 'MapoGoldenPier',
+    // fontWeight: 'bold',
   },
   etcButton: {
     flexDirection: 'row',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
   },
   etcButton2: {
     flexDirection: 'row',
     justifyContent: 'center',
-    marginTop: 85,
+    marginTop: 20,
   },
   etcBtn: {
-    marginHorizontal: 23,
+    marginLeft: 50,
+    marginRight: 35,
     width: width - 330,
     height: 20,
-    backgroundColor: 'rgb(178, 190, 195)',
-    opacity: 0.7,
-    marginTop: 25,
-    borderColor: 'transparent',
+    backgroundColor: 'transparent',
+
+    marginTop: 10,
+
     justifyContent: 'center',
-    borderRadius: 10,
   },
   etcBtnText: {
-    fontSize: 10.5,
+    fontSize: 13,
     textAlign: 'center',
     fontWeight: 'bold',
+    color: 'white',
+  },
+  loginCheck: {zIndex: 1, alignSelf: 'center'},
+  title: {
+    color: 'white',
+    textAlign: 'center',
+    marginTop: 130,
+    fontSize: 60,
+    fontWeight: 'bold',
+  },
+  littleTitle: {
+    color: 'white',
+    textAlign: 'center',
+    fontSize: 15,
+  },
+  sns: {
+    marginTop: 70,
+    opacity: 0.7,
+    color: 'white',
+    textAlign: 'center',
   },
 });
 

@@ -80,7 +80,8 @@ import com.android.build.OutputFile
  */
 
 project.ext.react = [
-    enableHermes: false,  // clean and rebuild if changing
+    // enableHermes: false,  // clean and rebuild if changing
+    enableHermes: true, // 리액트네비게이션
 ]
 
 apply from: "../../node_modules/react-native/react.gradle"
@@ -159,7 +160,7 @@ android {
 
     defaultConfig {
         applicationId "com.little_bar"
-        minSdkVersion rootProject.ext.minSdkVersion
+        minSdkVersion  23
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
